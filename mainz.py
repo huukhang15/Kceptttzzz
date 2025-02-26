@@ -293,17 +293,11 @@ def menu():
                 tiktok_chon = input()
                 print('\033[1;39m──────────────────────────────────────────────── ')
                 if tiktok_chon == '3.1':
-                    exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kcepttzz/master/new.py').text, globals())
+                    exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kceptttzzz/master/3.1.py').text, globals())
                     break
                 elif tiktok_chon == '3.2':
-                    print("\033[F\033[K", end="")
-                    print("\033[F\033[K", end="")
-                    print("\033[F\033[K", end="")
-                    print("\033[F\033[K", end="")
-                    print("\033[F\033[K", end="")
-                    print("\033[F\033[K", end="")
-                    for _ in range(5): print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
-                    continue
+                    exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kceptttzzz/master/3.2.py').text, globals())
+                    break
                 elif tiktok_chon == '3.3':
                     print("\033[F\033[K", end="")
                     print("\033[F\033[K", end="")
