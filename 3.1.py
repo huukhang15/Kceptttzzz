@@ -49,13 +49,25 @@ class TikTokLogin:
             followers_count = re.search(r'"followerCount":(\d+)', profile_response.text)
             following_count = re.search(r'"followingCount":(\d+)', profile_response.text)
 
-            return {
+            result = {
                 'success': True,
                 'username': username,
                 'nickname': nickname,
                 'follower_count': followers_count.group(1) if followers_count else 'N/A',
                 'following_count': following_count.group(1) if following_count else 'N/A'
             }
+
+            # Kiểm tra nếu tất cả thông tin chính đều là 'N/A'
+            if (result['username'] == 'N/A' and 
+                result['nickname'] == 'N/A' and 
+                result['follower_count'] == 'N/A' and 
+                result['following_count'] == 'N/A'):
+                return {
+                    'success': False,
+                    'message': 'Cookie đã die vui lòng nhập lại'
+                }
+
+            return result
         return {'success': False, 'message': 'Cookie không hợp lệ hoặc đã hết hạn'}
 
 #========= Khởi chạy Brave (Incognito Mode) =========#
