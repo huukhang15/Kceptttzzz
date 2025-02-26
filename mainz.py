@@ -274,15 +274,19 @@ def menu():
         chon = input('\033[1;91m┌─╼\033[1;97m[\033[1;91m<\033[1;97m/\033[1;91m>\033[1;97m]--\033[1;91m>\033[1;97m Nhập lựa chọn \033[1;97m \n\033[1;91m└─╼\033[1;91m✈ \033[1;33m : ')
         print('\033[1;39m──────────────────────────────────────────────── ')
         if chon == '1':
-            print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...")
-            break
+            print("\033[F\033[K", end="")
+            for _ in range(5): print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
+            os.system("clear")
+            continue
         elif chon =='2':
-            print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...")
-            break
+            print("\033[F\033[K", end="")
+            for _ in range(5): print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
+            os.system("clear")
+            continue
         elif chon == '3':#tiktk
             while True:
                 print(f"Bạn muốn sử dụng tôi làm gì?[tiktok]")
-                print(f"[3.1]. Unfollow hàng loạt.")
+                print(f"[3.1]. Unfollow hàng loạt.\033[1;32m[Online]")
                 print(f"[3.2]. Follow hàng loạt.")
                 print(f"[3.3]. Trở lại menu chính.")
                 print(f"{trang}Nhập lựa chọn của bạn : ", end="", flush=True)
