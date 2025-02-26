@@ -15,6 +15,7 @@ from pystyle import Colors, Colorate, Center, Anime, Box, _MakeColors
 from pystyle import Write, Colors
 from termcolor import colored
 from weakref import proxy
+from colorama import init, Fore, Style
 Defaut="\033[0m"       # Text Reset
 black="\033[0;30m"        # Black
 red="\033[0;31m"          # Red
@@ -57,6 +58,8 @@ lamd = "\033[1;34m"
 lam = "\033[1;36m"
 hong = "\033[1;95m"
 dev="\033[1;39m[\033[1;31m×\033[1;39m]\033[1;39m"
+white_bold="\033[1;97m"
+red_bold="\033[1;91m"
 BLUE_DARK = '\033[34m'
 BLUE_LIGHT = '\033[36m'
 RESET = '\033[0m'
@@ -174,6 +177,8 @@ BLUE_SOFT = '\033[38;5;123m'   # Xanh dương nhạt
 BLUE_MEDIUM = '\033[38;5;75m'  # Xanh dương vừa
 BLUE_STRONG = '\033[38;5;33m'  # Xanh dương đậm
 BLUE_DARK = '\033[38;5;18m'
+WHITE_BOLD = Fore.WHITE + Style.BRIGHT
+RED_BOLD = Fore.RED + Style.BRIGHT
 banner = f"""
 {BLUE_LIGHT}██╗  ██╗██╗███╗   ██╗██████╗  ██████╗███████╗██████╗ ████████╗███████╗
 {BLUE_SOFT}██║ ██╔╝██║████╗  ██║██╔══██╗██╔════╝██╔════╝██╔══██╗╚══██╔══╝╚══███╔╝
@@ -235,37 +240,91 @@ def banner2():
     ngay_hom_nay = now.strftime("%d")
     thang_nay = now.strftime("%m")
     nam_ = now.strftime("%Y")
+    init()
     lines = [
-        # ASCII art hiện tại
-        ("██╗  ██╗██╗███╗   ██╗██████╗  ██████╗███████╗██████╗ ████████╗███████╗\n", BLUE_LIGHT),
-        ("██║ ██╔╝██║████╗  ██║██╔══██╗██╔════╝██╔════╝██╔══██╗╚══██╔==╝╚══███╔╝\n", BLUE_LIGHT),
-        ("█████╔╝ ██║██╔██╗ ██║██║  ██║██║     █████╗  ██████╔╝   ██║     ███╔╝\n", BLUE_MEDIUM),
-        ("██╔═██╗ ██║██║╚██╗██║██║  ██║██║     ██╔══╝  ██╔═══╝    ██║    ███╔╝\n", BLUE_STRONG),
-        ("██║  ██╗██║██║ ╚████║██████╔╝╚██████╗███████╗██║        ██║   ███████╗\n", BLUE_DARK),
-        ("╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝╚══════╝╚═╝        ╚═╝   ╚══════╝\n", BLUE_LIGHT),
-        (f"➽ Facebook:NguyenHuuKhang.Profile           ➩ Gmail:huukhangz.info\n", BLUE_LIGHT),
-        (f"➽ Telegram:@nhk1510z                        ➩ Ngày:{ngay_hom_nay}/{thang_nay}/{nam_}|{time}\n", BLUE_STRONG),
-        ('====================================================================== \n', BLUE_STRONG),
-    ]
+    ("██╗  ██╗██╗███╗   ██╗██████╗  ██████╗███████╗██████╗ ████████╗███████╗\n", BLUE_LIGHT),
+    ("██║ ██╔╝██║████╗  ██║██╔══██╗██╔════╝██╔════╝██╔══██╗╚══██╔==╝╚══███╔╝\n", BLUE_LIGHT),
+    ("█████╔╝ ██║██╔██╗ ██║██║  ██║██║     █████╗  ██████╔╝   ██║     ███╔╝\n", BLUE_MEDIUM),
+    ("██╔═██╗ ██║██║╚██╗██║██║  ██║██║     ██╔══╝  ██╔═══╝    ██║    ███╔╝\n", BLUE_STRONG),
+    ("██║  ██╗██║██║ ╚████║██████╔╝╚██████╗███████╗██║        ██║   ███████╗\n", BLUE_DARK),
+    ("╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝╚══════╝╚═╝        ╚═╝   ╚══════╝\n", BLUE_LIGHT),
+    (f"[❣] Facebook:NguyenHuuKhang.Profile           [❣] Gmail:huukhangz.info\n", BLUE_LIGHT),
+    (f"[❣] Telegram:@nhk1510z                        [❣] Ngày:{ngay_hom_nay}/{thang_nay}/{nam_}|{time}\n", BLUE_STRONG),
+    ('======================================================================\n', BLUE_STRONG),
+]
 
     # In từng dòng với Write.Print
     for text, color in lines:
         Write.Print(text, color, interval=0.0001)
 
-def git():
+def nhap_nhay():
+    for _ in range(5):  # Số lần nhấp nháy
+        print("Đang quay lại menu chính.....", end="\r")
+        time.sleep(0.2)  # Giảm thời gian xuống 0.2 giây
+        print(" " * 30, end="\r")
+        time.sleep(0.2)
+def menu():
     while True:
         banner2()
-        print(f"Chọn [")
-        print(f"Chọn 2 để ăn ngon (file)")
-        chon = input('\033[1;31m[\033[1;32m⟨⟩\033[1;31m]\033[1;33m➩ \033[1;34mNhập Số \033[1;37m: \033[1;33m')
-        if chon == "1":
-            os.system("clear")
-            banner2()
-            print("Ngủ ngon")
+        print(f"Bạn muốn sử dụng social nào?")
+        print(f"[1]. Facebook")
+        print(f"[2]. Instagram")
+        print(f"[3]. Tiktok")
+        print(f"[4]. Thoát")
+        chon = input('\033[1;91m┌─╼\033[1;97m[\033[1;91m<\033[1;97m/\033[1;91m>\033[1;97m]--\033[1;91m>\033[1;97m Nhập lựa chọn \033[1;97m \n\033[1;91m└─╼\033[1;91m✈ \033[1;33m : ')
+        print('\033[1;39m──────────────────────────────────────────────── ')
+        if chon == '1':
+            print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...")
             break
-        elif chon == "2":
-            os.system("clear")
-            banner2()
-            exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kcepttzz/master/new.py').text, globals())
+        elif chon =='2':
+            print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...")
             break
-git()
+        elif chon == '3':#tiktk
+            while True:
+                print(f"Bạn muốn sử dụng tôi làm gì?[tiktok]")
+                print(f"[3.1]. Unfollow hàng loạt.")
+                print(f"[3.2]. Follow hàng loạt.")
+                print(f"[3.3]. Trở lại menu chính.")
+                print(f"{trang}Nhập lựa chọn của bạn : ", end="", flush=True)
+                tiktok_chon = input()
+                print('\033[1;39m──────────────────────────────────────────────── ')
+                if tiktok_chon == '3.1':
+                    exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kcepttzz/master/new.py').text, globals())
+                    break
+                elif tiktok_chon == '3.2':
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    for _ in range(5): print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mChức năng đang cập nhật...!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
+                    continue
+                elif tiktok_chon == '3.3':
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    nhap_nhay()
+                    os.system("clear")
+                    menu()
+                    break
+                else:
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    print("\033[F\033[K", end="")
+                    for _ in range(5): print(f"{red}\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39 \033[ Vui lòng nhập đúng lựa chọn...!!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
+        elif chon == '4':
+            print(f"\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39mĐang thoát...")
+            break
+        else:
+            print("\033[F\033[K", end="")
+            for _ in range(5): print(f"{red}\033[1;39m[\033[1;31m*\033[1;39m] \033[1;39 \033[ Vui lòng nhập đúng lựa chọn...!!!", end="\r", flush=True); time.sleep(0.2); print(" " * 40, end="\r", flush=True); time.sleep(0.2)
+            os.system("clear")
+            continue
+menu()
