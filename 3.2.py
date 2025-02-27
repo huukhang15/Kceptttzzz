@@ -343,6 +343,8 @@ if __name__ == "__main__":
             cookie_final = '; '.join(cookies)
             result = tiktok_login.login_with_cookie(cookie_final)
             if result['success']:
+                os.system('cls')
+                banner2()
                 print("===== Đăng nhập thành công ! =====")
                 print(f"Username: {result['username']}")
                 print(f"Link tài khoản: https://www.tiktok.com/@{result['username']}")
