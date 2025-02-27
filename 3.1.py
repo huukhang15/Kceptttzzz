@@ -330,7 +330,6 @@ def unfollowtheo_danhsach(driver, usernames):
 
             # Chống block: nghỉ sau số nhiệm vụ nhất định
             if task_count % jobs_to_rest == 0 and task_count > 0:
-                print(f"{yellow}⏳ Nghỉ [{rest_time}] giây để chống block...\033[0m")
                 for remaining in range(int(rest_time), 0, -1):
                     sys.stdout.write(f"\r{yellow}⏳ Còn [{remaining}] giây...    \033[0m")
                     sys.stdout.flush()
