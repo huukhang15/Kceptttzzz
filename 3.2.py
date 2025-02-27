@@ -233,7 +233,6 @@ def followtheo_danhsach(driver, usernames):
     delay_max = int(input('Nhập Delay Max: '))
     jobs_to_rest = int(input('Sau bao nhiêu nhiệm vụ thì kích hoạt chống block: '))
     rest_time = int(input(f'Sau {jobs_to_rest} nhiệm vụ thì nghỉ ngơi bao nhiêu giây: '))
-    print(f"\033[97m════════════════════════════════════════════════════════")
 
     count_success = 0
     failed_accounts = []
@@ -270,6 +269,7 @@ def followtheo_danhsach(driver, usernames):
                     )
                     if element.is_displayed():
                         print(f"\033[31m⚠️ {user} không tồn tại hoặc đã đổi username, bỏ qua...\033[0m")
+                        print(f"\033[97m════════════════════════════════════════════════════════")
                         account_thaydoiusername.append(user)
                         account_not_found = True
                         break
@@ -286,6 +286,7 @@ def followtheo_danhsach(driver, usernames):
                 )
                 if follow_button.is_displayed():
                     print(f"\033[33m✅ Bạn đã follow {user} rồi, bỏ qua !!!\033[0m")
+                    print(f"\033[97m════════════════════════════════════════════════════════")
                     consecutive_failures = 0  # Reset nếu đã follow
                     continue
             except (NoSuchElementException, TimeoutException):
@@ -299,6 +300,7 @@ def followtheo_danhsach(driver, usernames):
                         EC.element_to_be_clickable((By.CSS_SELECTOR, FOLLOW_BUTTON))
                     )
                     driver.execute_script("arguments[0].scrollIntoView(true);", following_button)
+                    print(f"\033[97m════════════════════════════════════════════════════════")
                     following_button.click()
                     driver.refresh()
                     time.sleep(2)
@@ -310,6 +312,7 @@ def followtheo_danhsach(driver, usernames):
                         count_success += 1
                         task_count += 1
                         print(f"{xl}✅ Bạn đã follow {user} ({count_success})\033[0m")
+                        print(f"\033[97m════════════════════════════════════════════════════════")
                         consecutive_failures = 0  # Reset khi follow thành công
                         break
                     except TimeoutException:
@@ -322,10 +325,12 @@ def followtheo_danhsach(driver, usernames):
 
             if retry == 3:
                 print(f"\033[31m❌ Hiện tại không thể follow {user} được.\033[0m")
+                print(f"\033[97m════════════════════════════════════════════════════════")
                 failed_accounts.append(user)
                 consecutive_failures += 1  # Tăng khi thất bại hoàn toàn với user
                 if consecutive_failures == 3:
                     print(f"\033[31m❌ Acc đã bị block chức năng follow, vui lòng thử lại sau...\033[0m")
+                    print(f"\033[97m════════════════════════════════════════════════════════")
                     break  # Thoát vòng lặp lớn nếu bị block
 
             # Chống block: nghỉ sau số nhiệm vụ nhất định

@@ -245,7 +245,7 @@ def unfollowtheo_danhsach(driver, usernames):
     for user in usernames:
         user_url = f"https://www.tiktok.com/@{user}"
         print(f"{trang}✨ Đang xử lý: {user_url}\033[0m")
-        print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
+        
 
         try:
             driver.get(user_url)
@@ -265,6 +265,7 @@ def unfollowtheo_danhsach(driver, usernames):
                     )
                     if element.is_displayed():
                         print(f"\033[31m⚠️ {user} không tồn tại hoặc đã đổi username, bỏ qua...\033[0m")
+                        print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
                         account_thaydoiusername.append(user)
                         account_not_found = True
                         break
@@ -281,6 +282,7 @@ def unfollowtheo_danhsach(driver, usernames):
                 )
                 if follow_button.is_displayed():
                     print(f"\033[33m✅ Bạn đã follow {user} rồi, bỏ qua !!!\033[0m")
+                    print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
                     consecutive_failures = 0  # Reset nếu đã follow
                     continue
             except (NoSuchElementException, TimeoutException):
@@ -304,34 +306,50 @@ def unfollowtheo_danhsach(driver, usernames):
                         )
                         count_success += 1
                         task_count += 1
-                        print(f"{xl}✅ Bạn đã follow {user} ({count_success})\033[0m")
+                        print(f"{xl}✅ Bạn đã unfollow {user} ({count_success})\033[0m")
+                        print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
                         consecutive_failures = 0  # Reset khi follow thành công
                         break
                     except TimeoutException:
                         retry += 1
-                        print(f"{yellow}⚠️ Thử lại follow {user} lần {retry}\033[0m")
+                        print(f"{yellow}⚠️ Thử lại unfollow {user} lần {retry}\033[0m")
 
                 except Exception as e:
-                    print(f"{red}❌ Lỗi khi thử follow {user}: {str(e)}\033[0m")
+                    print(f"{red}❌ Lỗi khi thử unfollow {user}: {str(e)}\033[0m")
                     break
 
             if retry == 3:
-                print(f"\033[31m❌ Hiện tại không thể follow {user} được.\033[0m")
+                print(f"\033[31m❌ Hiện tại không thể unfollow {user} được.\033[0m")
+                print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
                 failed_accounts.append(user)
                 consecutive_failures += 1  # Tăng khi thất bại hoàn toàn với user
                 if consecutive_failures == 3:
-                    print(f"\033[31m❌ Acc đã bị block chức năng follow, vui lòng thử lại sau...\033[0m")
+                    print(f"\033[31m❌ Acc đã bị block chức năng unfollow, vui lòng thử lại sau...\033[0m")
+                    print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
                     break  # Thoát vòng lặp lớn nếu bị block
 
             # Chống block: nghỉ sau số nhiệm vụ nhất định
             if task_count % jobs_to_rest == 0 and task_count > 0:
-                print(f"{yellow}⏳ Nghỉ {rest_time} giây để chống block...\033[0m")
-                time.sleep(rest_time)
+                print(f"{yellow}⏳ Nghỉ [{rest_time}] giây để chống block...\033[0m")
+                for remaining in range(int(rest_time), 0, -1):
+                    sys.stdout.write(f"\r{yellow}⏳ Còn [{remaining}] giây...    \033[0m")
+                    sys.stdout.flush()
+                    time.sleep(1)
+                sys.stdout.write("\r" + " " * 50 + "\r")  # Ghi đè bằng khoảng trắng để xóa dòng
+                sys.stdout.flush()
 
-            # Random delay giữa các tác vụ
+            # Đoạn code delay random với countdown
             delay = random.uniform(delay_min, delay_max)
-            print(f"{trang}⏳ Đợi {delay:.2f} giây trước khi xử lý tài khoản tiếp theo...\033[0m")
-            time.sleep(delay)
+            print(f"{trang}⏳ Đợi [{delay:.2f}] giây trước khi xử lý tài khoản tiếp theo...\033[0m")
+            for remaining in range(int(delay), 0, -1):
+                sys.stdout.write(f"\r{trang}⏳ Còn [{remaining}] giây...    \033[0m")
+                sys.stdout.flush()
+                time.sleep(1)
+            # Thêm 0.1 giây cuối nếu delay có phần thập phân
+            if delay % 1 > 0:
+                time.sleep(delay % 1)
+            sys.stdout.write("\r" + " " * 50 + "\r")  # Ghi đè bằng khoảng trắng để xóa dòng
+            sys.stdout.flush()
 
         except Exception as e:
             print(f"{red}❌ Lỗi bất ngờ khi xử lý {user}: {str(e)}\033[0m")
