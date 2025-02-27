@@ -252,7 +252,7 @@ def banner2():
     (f"[❣] Telegram:@nhk1510z                        [❣] Ngày:{ngay_hom_nay}/{thang_nay}/{nam_}|{time}\n", BLUE_STRONG),
     ('======================================================================\n', BLUE_STRONG),
 ]
-
+    
     # In từng dòng với Write.Print
     for text, color in lines:
         Write.Print(text, color, interval=0.0001)
@@ -286,16 +286,18 @@ def menu():
         elif chon == '3':#tiktk
             while True:
                 print(f"Bạn muốn sử dụng tôi làm gì?[tiktok]")
-                print(f"[3.1]. Unfollow hàng loạt.\033[1;32m[Online]")
-                print(f"[3.2]. Follow hàng loạt.")
+                print(f"[3.1]. Unfollow hàng loạt.\033[1;32m[Online]{RESET}")
+                print(f"[3.2]. Follow hàng loạt.\033[1;32m[Online]{RESET}")
                 print(f"[3.3]. Trở lại menu chính.")
                 print(f"{trang}Nhập lựa chọn của bạn : ", end="", flush=True)
                 tiktok_chon = input()
                 print('\033[1;39m──────────────────────────────────────────────── ')
                 if tiktok_chon == '3.1':
+                    print(f"Đang khởi động chức năng...")
                     exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kceptttzzz/master/3.1.py').text, globals())
                     break
                 elif tiktok_chon == '3.2':
+                    print(f"Đang khởi động chức năng...")
                     exec(requests.get('https://raw.githubusercontent.com/huukhang15/Kceptttzzz/master/3.2.py').text, globals())
                     break
                 elif tiktok_chon == '3.3':
