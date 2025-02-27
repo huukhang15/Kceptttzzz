@@ -221,6 +221,13 @@ def countdown_timer(seconds, message):
         print(f"\r{message} {i} giây...", end='', flush=True)
         time.sleep(1)
     print('\r' + ' ' * 80, end='\r')
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from datetime import datetime
+import time
+
 def unfollowtheo_danhsach(driver, usernames):
     delay_min = int(input('Nhập Delay Min: '))
     delay_max = int(input('Nhập Delay Max: '))
@@ -231,11 +238,15 @@ def unfollowtheo_danhsach(driver, usernames):
     count_success = 0
     failed_accounts = []
     account_thaydoiusername = []
+    consecutive_failures = 0  # Biến đếm số tài khoản thất bại liên tiếp
+    task_count = 0
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     failed_file = f"failed_unfollow_{timestamp}.txt"
 
-    task_count = 0
+    # Định nghĩa các selector
+    FOLLOWING_BUTTON = '[data-e2e="follow-button"]:not([aria-label*="Follow"])'
+    FOLLOW_BUTTON = '[data-e2e="follow-button"][aria-label*="Follow"]'
 
     for user in usernames:
         user_url = f"https://www.tiktok.com/@{user}"
@@ -245,11 +256,12 @@ def unfollowtheo_danhsach(driver, usernames):
             driver.get(user_url)
             time.sleep(2)
 
+            # Kiểm tra tài khoản không tồn tại hoặc đổi username
             error_messages = [
                 "//p[contains(text(), \"Couldn't find this account\")]",
                 "//p[contains(text(), 'Không tìm thấy tài khoản này')]",
-                "//div[contains(text(), \"Couldn't find this account\")]"]
-
+                "//div[contains(text(), \"Couldn't find this account\")]"
+            ]
             account_not_found = False
             for xpath in error_messages:
                 try:
@@ -267,19 +279,19 @@ def unfollowtheo_danhsach(driver, usernames):
             if account_not_found:
                 continue
 
-            FOLLOWING_BUTTON = '[data-e2e="follow-button"]:not([aria-label*="Follow"])'
-            FOLLOW_BUTTON = '[data-e2e="follow-button"][aria-label*="Follow"]'
-
+            # Kiểm tra đã follow chưa
             try:
                 follow_button = WebDriverWait(driver, 3).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, FOLLOWING_BUTTON))
                 )
                 if follow_button.is_displayed():
                     print(f"\033[33m✅ Bạn đã follow {user} rồi, bỏ qua !!!\033[0m")
+                    consecutive_failures = 0  # Reset nếu đã follow
                     continue
             except (NoSuchElementException, TimeoutException):
                 pass
 
+            # Thử follow với tối đa 3 lần
             retry = 0
             while retry < 3:
                 try:
@@ -298,6 +310,7 @@ def unfollowtheo_danhsach(driver, usernames):
                         count_success += 1
                         task_count += 1
                         print(f"{xl}✅ Bạn đã follow {user} ({count_success})\033[0m")
+                        consecutive_failures = 0  # Reset khi follow thành công
                         break
                     except TimeoutException:
                         retry += 1
@@ -310,22 +323,32 @@ def unfollowtheo_danhsach(driver, usernames):
             if retry == 3:
                 print(f"\033[31m❌ Hiện tại không thể follow {user} được.\033[0m")
                 failed_accounts.append(user)
+                consecutive_failures += 1  # Tăng khi thất bại hoàn toàn với user
+                if consecutive_failures == 3:
+                    print(f"\033[31m❌ Acc đã bị block chức năng follow, vui lòng thử lại sau...\033[0m")
+                    break  # Thoát vòng lặp lớn nếu bị block
 
-            if task_count % jobs_to_rest == 0 and task_count != 0:
-                countdown_timer(rest_time, f"🔄 Nghỉ ngơi chống block trong")
-            else:
-                delay = random.randint(delay_min, delay_max)
-                countdown_timer(delay, f"⏳ Đang đợi")
+            # Chống block: nghỉ sau số nhiệm vụ nhất định
+            if task_count % jobs_to_rest == 0 and task_count > 0:
+                print(f"{yellow}⏳ Nghỉ {rest_time} giây để chống block...\033[0m")
+                time.sleep(rest_time)
+
+            # Random delay giữa các tác vụ
+            delay = random.uniform(delay_min, delay_max)
+            print(f"{trang}⏳ Đợi {delay:.2f} giây trước khi xử lý tài khoản tiếp theo...\033[0m")
+            time.sleep(delay)
 
         except Exception as e:
-            print(f"\033[31m⚠️ Có lỗi xảy ra với {user}: {str(e)}\033[0m")
-            continue
+            print(f"{red}❌ Lỗi bất ngờ khi xử lý {user}: {str(e)}\033[0m")
+            failed_accounts.append(user)
 
+    # Ghi danh sách tài khoản thất bại vào file
     unique_accounts = set(failed_accounts)
     with open(failed_file, 'w', encoding='utf-8') as f:
         for account in unique_accounts:
             f.write(f"Username: {account}\n")
 
+    # Tổng kết
     print(f"{trang}📊 Tổng kết:\033[0m")
     print(f"{trang} Đã lưu danh sách tài khoản follow thất bại vào file: {failed_file}")
     print(f"{xl}✅ Số tài khoản đã follow thành công: {count_success}\033[0m")
