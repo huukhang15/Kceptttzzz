@@ -335,13 +335,25 @@ def followtheo_danhsach(driver, usernames):
 
             # Chống block: nghỉ sau số nhiệm vụ nhất định
             if task_count % jobs_to_rest == 0 and task_count > 0:
-                print(f"{yellow}⏳ Nghỉ {rest_time} giây để chống block...\033[0m")
-                time.sleep(rest_time)
+                print(f"{yellow}⏳ Nghỉ [{rest_time}] giây để chống block...\033[0m")
+                for remaining in range(int(rest_time), 0, -1):
+                    sys.stdout.write(f"\r{yellow}⏳ Còn [{remaining}] giây...    \033[0m")
+                    sys.stdout.flush()
+                    time.sleep(1)
+                sys.stdout.write("\r" + " " * 50 + "\r")  # Ghi đè bằng khoảng trắng để xóa dòng
+                sys.stdout.flush()
 
-            # Random delay giữa các tác vụ
+            # Đoạn code delay random với countdown
             delay = random.uniform(delay_min, delay_max)
-            print(f"{trang}⏳ Đợi {delay:.2f} giây trước khi xử lý tài khoản tiếp theo...\033[0m")
-            time.sleep(delay)
+            for remaining in range(int(delay), 0, -1):
+                sys.stdout.write(f"\r{trang}⏳ Còn [{remaining}] giây...    \033[0m")
+                sys.stdout.flush()
+                time.sleep(1)
+            # Thêm 0.1 giây cuối nếu delay có phần thập phân
+            if delay % 1 > 0:
+                time.sleep(delay % 1)
+            sys.stdout.write("\r" + " " * 50 + "\r")  # Ghi đè bằng khoảng trắng để xóa dòng
+            sys.stdout.flush()
 
         except Exception as e:
             print(f"{red}❌ Lỗi bất ngờ khi xử lý {user}: {str(e)}\033[0m")

@@ -340,7 +340,6 @@ def unfollowtheo_danhsach(driver, usernames):
 
             # Đoạn code delay random với countdown
             delay = random.uniform(delay_min, delay_max)
-            print(f"{trang}⏳ Đợi [{delay:.2f}] giây trước khi xử lý tài khoản tiếp theo...\033[0m")
             for remaining in range(int(delay), 0, -1):
                 sys.stdout.write(f"\r{trang}⏳ Còn [{remaining}] giây...    \033[0m")
                 sys.stdout.flush()
