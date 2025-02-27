@@ -228,7 +228,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from datetime import datetime
 import time
 
-def unfollowtheo_danhsach(driver, usernames):
+def followtheo_danhsach(driver, usernames):
     delay_min = int(input('Nhập Delay Min: '))
     delay_max = int(input('Nhập Delay Max: '))
     jobs_to_rest = int(input('Sau bao nhiêu nhiệm vụ thì kích hoạt chống block: '))
@@ -375,7 +375,7 @@ if __name__ == "__main__":
                 print(f"Số người đang theo dõi: {result['following_count']}")
                 print(f"=" * 29)
                 usernames = docdanhsach()
-                unfollowtheo_danhsach(driver, usernames)
+                followtheo_danhsach(driver, usernames)
             else:
                 print(result['message'])
                 

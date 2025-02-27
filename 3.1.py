@@ -227,30 +227,36 @@ def unfollowtheo_danhsach(driver, usernames):
     delay_max = int(input('Nhập Delay Max: '))
     jobs_to_rest = int(input('Sau bao nhiêu nhiệm vụ thì kích hoạt chống block: '))
     rest_time = int(input(f'Sau {jobs_to_rest} nhiệm vụ thì nghỉ ngơi bao nhiêu giây: '))
-    print("="*55)
+    print(f"\033[97m════════════════════════════════════════════════════════")
 
     count_success = 0
     failed_accounts = []
     account_thaydoiusername = []
+    consecutive_failures = 0  # Biến đếm số tài khoản thất bại liên tiếp
+    task_count = 0
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     failed_file = f"failed_unfollow_{timestamp}.txt"
 
-    task_count = 0
+    # Định nghĩa các selector
+    FOLLOW_BUTTON = '[data-e2e="follow-button"]:not([aria-label*="Following"])'
+    FOLLOWING_BUTTON = '[data-e2e="follow-button"][aria-label*="Following"]'
 
     for user in usernames:
         user_url = f"https://www.tiktok.com/@{user}"
         print(f"{trang}✨ Đang xử lý: {user_url}\033[0m")
+        print(f"\033[97m════════════════════════════════════════════════════════\033[0m")
 
         try:
             driver.get(user_url)
             time.sleep(2)
 
+            # Kiểm tra tài khoản không tồn tại hoặc đổi username
             error_messages = [
                 "//p[contains(text(), \"Couldn't find this account\")]",
                 "//p[contains(text(), 'Không tìm thấy tài khoản này')]",
-                "//div[contains(text(), \"Couldn't find this account\")]"]
-
+                "//div[contains(text(), \"Couldn't find this account\")]"
+            ]
             account_not_found = False
             for xpath in error_messages:
                 try:
@@ -268,19 +274,19 @@ def unfollowtheo_danhsach(driver, usernames):
             if account_not_found:
                 continue
 
-            FOLLOW_BUTTON = '[data-e2e="follow-button"]:not([aria-label*="Following"])'
-            FOLLOWING_BUTTON = '[data-e2e="follow-button"][aria-label*="Following"]'
-
+            # Kiểm tra đã follow chưa
             try:
                 follow_button = WebDriverWait(driver, 3).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, FOLLOW_BUTTON))
                 )
                 if follow_button.is_displayed():
-                    print(f"\033[33m✅ Bạn đã unfollow rồi, bỏ qua !!!\033[0m")
+                    print(f"\033[33m✅ Bạn đã follow {user} rồi, bỏ qua !!!\033[0m")
+                    consecutive_failures = 0  # Reset nếu đã follow
                     continue
             except (NoSuchElementException, TimeoutException):
                 pass
 
+            # Thử follow với tối đa 3 lần
             retry = 0
             while retry < 3:
                 try:
@@ -298,39 +304,50 @@ def unfollowtheo_danhsach(driver, usernames):
                         )
                         count_success += 1
                         task_count += 1
-                        print(f"{xl}✅ Bạn đã unfollow {user} ({count_success})\033[0m")
+                        print(f"{xl}✅ Bạn đã follow {user} ({count_success})\033[0m")
+                        consecutive_failures = 0  # Reset khi follow thành công
                         break
                     except TimeoutException:
                         retry += 1
-                        print(f"{yellow}⚠️ Thử lại unfollow {user} lần {retry}\033[0m")
+                        print(f"{yellow}⚠️ Thử lại follow {user} lần {retry}\033[0m")
 
                 except Exception as e:
-                    print(f"{red}❌ Lỗi khi thử unfollow {user}: {str(e)}\033[0m")
+                    print(f"{red}❌ Lỗi khi thử follow {user}: {str(e)}\033[0m")
                     break
 
             if retry == 3:
-                print(f"\033[31m❌ Hiện tại không thể unfollow {user} được.\033[0m")
+                print(f"\033[31m❌ Hiện tại không thể follow {user} được.\033[0m")
                 failed_accounts.append(user)
+                consecutive_failures += 1  # Tăng khi thất bại hoàn toàn với user
+                if consecutive_failures == 3:
+                    print(f"\033[31m❌ Acc đã bị block chức năng follow, vui lòng thử lại sau...\033[0m")
+                    break  # Thoát vòng lặp lớn nếu bị block
 
-            if task_count % jobs_to_rest == 0 and task_count != 0:
-                countdown_timer(rest_time, f"🔄 Nghỉ ngơi chống block trong")
-            else:
-                delay = random.randint(delay_min, delay_max)
-                countdown_timer(delay, f"⏳ Đang đợi")
+            # Chống block: nghỉ sau số nhiệm vụ nhất định
+            if task_count % jobs_to_rest == 0 and task_count > 0:
+                print(f"{yellow}⏳ Nghỉ {rest_time} giây để chống block...\033[0m")
+                time.sleep(rest_time)
+
+            # Random delay giữa các tác vụ
+            delay = random.uniform(delay_min, delay_max)
+            print(f"{trang}⏳ Đợi {delay:.2f} giây trước khi xử lý tài khoản tiếp theo...\033[0m")
+            time.sleep(delay)
 
         except Exception as e:
-            print(f"\033[31m⚠️ Có lỗi xảy ra với {user}: {str(e)}\033[0m")
-            continue
+            print(f"{red}❌ Lỗi bất ngờ khi xử lý {user}: {str(e)}\033[0m")
+            failed_accounts.append(user)
 
+    # Ghi danh sách tài khoản thất bại vào file
     unique_accounts = set(failed_accounts)
     with open(failed_file, 'w', encoding='utf-8') as f:
         for account in unique_accounts:
             f.write(f"Username: {account}\n")
 
+    # Tổng kết
     print(f"{trang}📊 Tổng kết:\033[0m")
-    print(f"{trang} Đã lưu danh sách tài khoản unfollow thất bại vào file: {failed_file}")
-    print(f"{xl}✅ Số tài khoản đã unfollow thành công: {count_success}\033[0m")
-    print(f"{red}❌ Số tài khoản không thể unfollow: {len(failed_accounts)}\033[0m")
+    print(f"{trang} Đã lưu danh sách tài khoản follow thất bại vào file: {failed_file}")
+    print(f"{xl}✅ Số tài khoản đã follow thành công: {count_success}\033[0m")
+    print(f"{red}❌ Số tài khoản không thể follow: {len(failed_accounts)}\033[0m")
     print(f"{yellow}🔄 Số tài khoản có thể đã đổi username: {len(account_thaydoiusername)}\033[0m")
 if __name__ == "__main__":
     chay_brave()
