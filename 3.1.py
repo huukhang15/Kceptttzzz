@@ -390,6 +390,7 @@ if __name__ == "__main__":
             else:
                 print(result['message'])
     elif KeyboardInterrupt:
+            print(f"{trang}📊 Cảm ơn bạn đã sử dụng tôi<3333\033[0m")
             print(f"{trang}📊 Tổng kết:\033[0m")
             print(f"{trang} Đã lưu danh sách tài khoản follow thất bại vào file: {failed_file}")
             print(f"{xl}✅ Số tài khoản đã follow thành công: {count_success}\033[0m")
