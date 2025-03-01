@@ -389,4 +389,11 @@ if __name__ == "__main__":
                 unfollowtheo_danhsach(driver, usernames)
             else:
                 print(result['message'])
+    elif KeyboardInterrupt:
+            print(f"{trang}📊 Tổng kết:\033[0m")
+            print(f"{trang} Đã lưu danh sách tài khoản follow thất bại vào file: {failed_file}")
+            print(f"{xl}✅ Số tài khoản đã follow thành công: {count_success}\033[0m")
+            print(f"{red}❌ Số tài khoản không thể follow: {len(failed_accounts)}\033[0m")
+            print(f"{yellow}🔄 Số tài khoản có thể đã đổi username: {len(account_thaydoiusername)}\033[0m")
+        
                 
